@@ -7,10 +7,7 @@ import com.ngovanngoc.employees.repository.IDuAnRepostory;
 import com.ngovanngoc.employees.repository.INhanVienRepository;
 import com.ngovanngoc.employees.repository.IPhanCongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,15 +40,21 @@ public class EmployeeController {
     public void payrollEp() {
         List<PhanCong> listPC = pcRep.findAll();
         List<NhanVien> listNV = nvRep.findAll();
-        listNV.forEach(x -> {
+        for (NhanVien x : listNV) {
             int sum = 0;
-            for (int i = 0; i < listPC.size(); i++) {
-                if (x.getId() == listPC.get(i).getNhanVien().getId()) {
-                    sum += listPC.get(i).getSoGioLam();
+            for (PhanCong phanCong : listPC) {
+                if (x.getId() == phanCong.getNhanVien().getId()) {
+                    sum += phanCong.getSoGioLam();
                 }
             }
             int salary = sum * 15 * x.getHesoluong();
             System.out.println(x.getHoten() + ":" + salary);
-        });
+        }
+    }
+
+    @GetMapping(value = "nhanvien")
+    public List<NhanVien> get() {
+        payrollEp();
+        return nvRep.findAll();
     }
 }
